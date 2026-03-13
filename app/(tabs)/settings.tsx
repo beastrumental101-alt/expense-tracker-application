@@ -16,6 +16,7 @@ const CURRENCIES = [
   { code: "AUD", symbol: "A$", label: "Australian Dollar" },
   { code: "CHF", symbol: "CHF", label: "Swiss Franc" },
   { code: "CNY", symbol: "¥", label: "Chinese Yuan" },
+  { code: "XAF", symbol: "FCFA", label: "Cameroon CFA Franc" },
 ];
 
 export default function SettingsScreen() {

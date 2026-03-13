@@ -36,3 +36,7 @@
 - [x] Verify data persistence across app restarts
 - [ ] Test on iOS and Android (via Expo Go)
 - [x] Final UI polish and refinement
+
+## Additional Features
+
+- [x] Add Cameroon CFA (XAF) currency support
