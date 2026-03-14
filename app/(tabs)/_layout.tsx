@@ -36,10 +36,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="recurring"
+        options={{
+          title: "Recurring",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chevron.left.forwardslash.chevron.right" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="summary"
         options={{
           title: "Summary",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chevron.right" color={color} />,
         }}
       />
       <Tabs.Screen

@@ -35,6 +35,21 @@ export interface MonthlyData {
   categories: Record<Category, number>;
 }
 
+export type RecurrenceFrequency = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly";
+
+export interface RecurringTransaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  category: Category;
+  frequency: RecurrenceFrequency;
+  startDate: string; // ISO date string (YYYY-MM-DD)
+  endDate?: string; // ISO date string (YYYY-MM-DD), optional for ongoing
+  notes?: string;
+  lastGeneratedDate?: string; // Last date a transaction was auto-generated
+  createdAt: string; // ISO timestamp
+}
+
 export interface Settings {
   currency: string; // e.g., "USD", "EUR", "GBP"
   currencySymbol: string; // e.g., "$", "€", "£"

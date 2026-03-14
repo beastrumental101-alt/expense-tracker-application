@@ -3,10 +3,12 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Transaction, Settings } from "./types";
+import { Transaction, Settings, RecurringTransaction } from "./types";
 
 const TRANSACTIONS_KEY = "@expense_tracker_transactions";
 const SETTINGS_KEY = "@expense_tracker_settings";
+const RECURRING_TRANSACTIONS_KEY = "@expense_tracker_recurring_transactions";
+const LAST_SYNC_KEY = "@expense_tracker_last_sync";
 
 const DEFAULT_SETTINGS: Settings = {
   currency: "USD",
@@ -133,6 +135,103 @@ export async function exportTransactionsAsCSV(): Promise<string> {
     return csv;
   } catch (error) {
     console.error("Error exporting transactions:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get all recurring transactions from storage
+ */
+export async function getRecurringTransactions(): Promise<RecurringTransaction[]> {
+  try {
+    const data = await AsyncStorage.getItem(RECURRING_TRANSACTIONS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error reading recurring transactions:", error);
+    return [];
+  }
+}
+
+/**
+ * Add a recurring transaction
+ */
+export async function addRecurringTransaction(
+  recurring: RecurringTransaction
+): Promise<void> {
+  try {
+    const recurringTransactions = await getRecurringTransactions();
+    recurringTransactions.push(recurring);
+    await AsyncStorage.setItem(
+      RECURRING_TRANSACTIONS_KEY,
+      JSON.stringify(recurringTransactions)
+    );
+  } catch (error) {
+    console.error("Error saving recurring transaction:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update a recurring transaction
+ */
+export async function updateRecurringTransaction(
+  id: string,
+  updates: Partial<RecurringTransaction>
+): Promise<void> {
+  try {
+    const recurringTransactions = await getRecurringTransactions();
+    const index = recurringTransactions.findIndex((t) => t.id === id);
+    if (index !== -1) {
+      recurringTransactions[index] = { ...recurringTransactions[index], ...updates };
+      await AsyncStorage.setItem(
+        RECURRING_TRANSACTIONS_KEY,
+        JSON.stringify(recurringTransactions)
+      );
+    }
+  } catch (error) {
+    console.error("Error updating recurring transaction:", error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a recurring transaction
+ */
+export async function deleteRecurringTransaction(id: string): Promise<void> {
+  try {
+    const recurringTransactions = await getRecurringTransactions();
+    const filtered = recurringTransactions.filter((t) => t.id !== id);
+    await AsyncStorage.setItem(
+      RECURRING_TRANSACTIONS_KEY,
+      JSON.stringify(filtered)
+    );
+  } catch (error) {
+    console.error("Error deleting recurring transaction:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get last sync timestamp
+ */
+export async function getLastSyncTime(): Promise<number> {
+  try {
+    const data = await AsyncStorage.getItem(LAST_SYNC_KEY);
+    return data ? parseInt(data, 10) : 0;
+  } catch (error) {
+    console.error("Error reading last sync time:", error);
+    return 0;
+  }
+}
+
+/**
+ * Update last sync timestamp
+ */
+export async function updateLastSyncTime(): Promise<void> {
+  try {
+    await AsyncStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
+  } catch (error) {
+    console.error("Error updating last sync time:", error);
     throw error;
   }
 }

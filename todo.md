@@ -40,3 +40,13 @@
 ## Additional Features
 
 - [x] Add Cameroon CFA (XAF) currency support
+
+## Recurring Transactions Feature
+
+- [x] Create RecurringTransaction type and data model
+- [x] Add recurring transaction context provider
+- [x] Build recurring transaction creation screen
+- [x] Implement recurring transaction generation logic
+- [x] Add recurring transaction management screen (view, edit, delete)
+- [ ] Add recurring transactions to home screen quick view
+- [x] Write unit tests for recurring transaction logic
