@@ -3,12 +3,13 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Transaction, Settings, RecurringTransaction } from "./types";
+import { Transaction, Settings, RecurringTransaction, Budget } from "./types";
 
 const TRANSACTIONS_KEY = "@expense_tracker_transactions";
 const SETTINGS_KEY = "@expense_tracker_settings";
 const RECURRING_TRANSACTIONS_KEY = "@expense_tracker_recurring_transactions";
 const LAST_SYNC_KEY = "@expense_tracker_last_sync";
+const BUDGETS_KEY = "@expense_tracker_budgets";
 
 const DEFAULT_SETTINGS: Settings = {
   currency: "USD",
@@ -232,6 +233,78 @@ export async function updateLastSyncTime(): Promise<void> {
     await AsyncStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
   } catch (error) {
     console.error("Error updating last sync time:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get all budgets from storage
+ */
+export async function getBudgets(): Promise<Budget[]> {
+  try {
+    const data = await AsyncStorage.getItem(BUDGETS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error reading budgets:", error);
+    return [];
+  }
+}
+
+/**
+ * Add a budget
+ */
+export async function addBudget(budget: Budget): Promise<void> {
+  try {
+    const budgets = await getBudgets();
+    budgets.push(budget);
+    await AsyncStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+  } catch (error) {
+    console.error("Error saving budget:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update a budget
+ */
+export async function updateBudget(id: string, updates: Partial<Budget>): Promise<void> {
+  try {
+    const budgets = await getBudgets();
+    const index = budgets.findIndex((b) => b.id === id);
+    if (index !== -1) {
+      budgets[index] = { ...budgets[index], ...updates, updatedAt: new Date().toISOString() };
+      await AsyncStorage.setItem(BUDGETS_KEY, JSON.stringify(budgets));
+    }
+  } catch (error) {
+    console.error("Error updating budget:", error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a budget
+ */
+export async function deleteBudget(id: string): Promise<void> {
+  try {
+    const budgets = await getBudgets();
+    const filtered = budgets.filter((b) => b.id !== id);
+    await AsyncStorage.setItem(BUDGETS_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error("Error deleting budget:", error);
+    throw error;
+  }
+}
+
+/**
+ * Clear all budgets for a specific month
+ */
+export async function clearBudgetsForMonth(month: string): Promise<void> {
+  try {
+    const budgets = await getBudgets();
+    const filtered = budgets.filter((b) => b.month !== month);
+    await AsyncStorage.setItem(BUDGETS_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error("Error clearing budgets:", error);
     throw error;
   }
 }

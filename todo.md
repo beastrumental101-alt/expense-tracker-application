@@ -50,3 +50,13 @@
 - [x] Add recurring transaction management screen (view, edit, delete)
 - [ ] Add recurring transactions to home screen quick view
 - [x] Write unit tests for recurring transaction logic
+
+## Budget Management Feature
+
+- [x] Create Budget type and data model
+- [x] Add budget context provider
+- [x] Build budget setup/edit screen
+- [x] Implement budget progress tracking logic
+- [ ] Add budget overview to summary screen
+- [ ] Create budget alerts and notifications
+- [x] Write unit tests for budget utilities

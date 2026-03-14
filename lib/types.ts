@@ -50,6 +50,16 @@ export interface RecurringTransaction {
   createdAt: string; // ISO timestamp
 }
 
+export interface Budget {
+  id: string;
+  category: ExpenseCategory;
+  monthlyLimit: number; // Budget limit for the month
+  month: string; // YYYY-MM format
+  notes?: string;
+  createdAt: string; // ISO timestamp
+  updatedAt: string; // ISO timestamp
+}
+
 export interface Settings {
   currency: string; // e.g., "USD", "EUR", "GBP"
   currencySymbol: string; // e.g., "$", "€", "£"
