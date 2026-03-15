@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 
@@ -11,9 +12,30 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Load persisted theme preference on mount
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const AsyncStorage = await import("@react-native-async-storage/async-storage").then(
+          (m) => m.default
+        );
+        const savedTheme = await AsyncStorage.getItem("@expense_tracker_theme");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          setColorSchemeState(savedTheme);
+        }
+      } catch (error) {
+        console.error("Error loading theme preference:", error);
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+    loadTheme();
+  }, []);
 
   const applyScheme = useCallback((scheme: ColorScheme) => {
     nativewindColorScheme.set(scheme);

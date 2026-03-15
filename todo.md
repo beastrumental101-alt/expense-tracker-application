@@ -60,3 +60,10 @@
 - [ ] Add budget overview to summary screen
 - [ ] Create budget alerts and notifications
 - [x] Write unit tests for budget utilities
+
+## Theme & UI Enhancements
+
+- [x] Add theme toggle button to settings screen
+- [x] Persist theme preference to AsyncStorage
+- [x] Update theme colors for light and dark modes
+- [x] Test theme switching across all screens

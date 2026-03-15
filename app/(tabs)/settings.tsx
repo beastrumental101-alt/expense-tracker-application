@@ -2,10 +2,12 @@ import { ScrollView, Text, View, TouchableOpacity, Modal, FlatList, ActivityIndi
 import { ScreenContainer } from "@/components/screen-container";
 import { useTransactions } from "@/lib/transaction-context";
 import { useColors } from "@/hooks/use-colors";
+import { useThemeContext } from "@/lib/theme-provider";
 import { exportTransactionsAsCSV } from "@/lib/storage";
 import { useState } from "react";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CURRENCIES = [
   { code: "USD", symbol: "$", label: "US Dollar" },
@@ -21,11 +23,18 @@ const CURRENCIES = [
 
 export default function SettingsScreen() {
   const colors = useColors();
+  const { colorScheme, setColorScheme } = useThemeContext();
   const { settings, updateSettings, clearAllTransactions, transactions, isLoading } =
     useTransactions();
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+
+  const handleThemeToggle = async () => {
+    const newTheme = colorScheme === "light" ? "dark" : "light";
+    setColorScheme(newTheme);
+    await AsyncStorage.setItem("@expense_tracker_theme", newTheme);
+  };
 
   const handleCurrencyChange = async (code: string, symbol: string) => {
     await updateSettings({ currency: code, currencySymbol: symbol });
@@ -88,6 +97,23 @@ export default function SettingsScreen() {
         <View className="gap-6">
           {/* Header */}
           <Text className="text-3xl font-bold text-foreground">Settings</Text>
+
+          {/* Theme Selection */}
+          <View className="gap-3">
+            <Text className="text-lg font-semibold text-foreground">Appearance</Text>
+            <TouchableOpacity
+              onPress={handleThemeToggle}
+              className="bg-surface rounded-xl border border-border p-4 flex-row items-center justify-between"
+            >
+              <View>
+                <Text className="text-sm text-muted">Theme</Text>
+                <Text className="text-base font-semibold text-foreground mt-1">
+                  {colorScheme === "light" ? "☀️ Light" : "🌙 Dark"}
+                </Text>
+              </View>
+              <Text className="text-2xl">{colorScheme === "light" ? "☀️" : "🌙"}</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Currency Selection */}
           <View className="gap-3">
