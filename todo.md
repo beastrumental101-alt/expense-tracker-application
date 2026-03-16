@@ -78,3 +78,9 @@
 - [x] Implement smooth list animations for transaction history
 - [ ] Add modal entrance/exit animations
 - [x] Create animated progress bars for budget tracking
+
+## Month Navigation Improvements
+
+- [x] Increase size of month selection arrow icons
+- [x] Add swipe gesture support for month navigation
+- [x] Improve touch target size for better usability

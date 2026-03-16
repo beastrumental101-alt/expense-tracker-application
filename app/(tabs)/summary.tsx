@@ -1,15 +1,32 @@
-import { ScrollView, Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, ActivityIndicator, PanResponder } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useTransactions } from "@/lib/transaction-context";
 import { formatCurrency, getCurrentMonth, getNextMonth, getPreviousMonth } from "@/lib/utils-expense";
 import { useColors } from "@/hooks/use-colors";
 import { getCategoryLabel } from "@/lib/types";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 
 export default function SummaryScreen() {
   const colors = useColors();
   const { monthlyData, settings, isLoading } = useTransactions();
   const [currentMonth, setCurrentMonth] = useState(getCurrentMonth());
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        const { dx } = gestureState;
+        // Swipe right (dx > 50) - go to previous month
+        if (dx > 50) {
+          setCurrentMonth(getPreviousMonth(currentMonth));
+        }
+        // Swipe left (dx < -50) - go to next month
+        else if (dx < -50) {
+          setCurrentMonth(getNextMonth(currentMonth));
+        }
+      },
+    })
+  ).current;
 
   const data = monthlyData[currentMonth];
   const previousMonthData = monthlyData[getPreviousMonth(currentMonth)];
@@ -40,19 +57,30 @@ export default function SummaryScreen() {
           {/* Header */}
           <Text className="text-3xl font-bold text-foreground">Monthly Summary</Text>
 
-          {/* Month Navigation */}
-          <View className="flex-row items-center justify-between bg-surface rounded-xl p-4 border border-border">
-            <TouchableOpacity onPress={() => setCurrentMonth(getPreviousMonth(currentMonth))}>
-              <Text className="text-lg text-primary font-semibold">‹</Text>
+          {/* Month Navigation with Swipe Support */}
+          <View
+            {...panResponder.panHandlers}
+            className="flex-row items-center justify-between bg-surface rounded-xl p-4 border border-border"
+          >
+            <TouchableOpacity
+              onPress={() => setCurrentMonth(getPreviousMonth(currentMonth))}
+              className="p-3 rounded-lg active:bg-primary active:bg-opacity-20"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text className="text-4xl text-primary font-bold">‹</Text>
             </TouchableOpacity>
-            <Text className="text-lg font-semibold text-foreground">
+            <Text className="text-lg font-semibold text-foreground flex-1 text-center">
               {new Date(currentMonth + "-01").toLocaleDateString("en-US", {
                 month: "long",
                 year: "numeric",
               })}
             </Text>
-            <TouchableOpacity onPress={() => setCurrentMonth(getNextMonth(currentMonth))}>
-              <Text className="text-lg text-primary font-semibold">›</Text>
+            <TouchableOpacity
+              onPress={() => setCurrentMonth(getNextMonth(currentMonth))}
+              className="p-3 rounded-lg active:bg-primary active:bg-opacity-20"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text className="text-4xl text-primary font-bold">›</Text>
             </TouchableOpacity>
           </View>
 
