@@ -26,6 +26,7 @@ import {
   getBudgetStatusColor,
 } from "@/lib/budget-utils";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { AnimatedProgressBar } from "@/components/animated-progress-bar";
 import { getCurrentMonth } from "@/lib/utils-expense";
 import { useState } from "react";
 
@@ -175,7 +176,7 @@ export default function BudgetsScreen() {
                 onPress={() => handleEditBudget(item.budget)}
                 className="bg-surface rounded-xl p-4 mb-3 border border-border"
               >
-                <View className="gap-3">
+                <View className="gap-2">
                   {/* Header */}
                   <View className="flex-row items-center justify-between">
                     <View className="flex-row items-center gap-3 flex-1">
@@ -208,44 +209,14 @@ export default function BudgetsScreen() {
                     </TouchableOpacity>
                   </View>
 
-                  {/* Progress Bar */}
-                  <View className="gap-2">
-                    <View className="h-2 bg-border rounded-full overflow-hidden">
-                      <View
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${Math.min(item.progress, 100)}%`,
-                          backgroundColor: getBudgetStatusColor(item.status, colors),
-                        }}
-                      />
-                    </View>
-
-                    {/* Amount Info */}
-                    <View className="flex-row justify-between items-center">
-                      <Text className="text-xs text-muted">
-                        {settings.currencySymbol}
-                        {item.spent.toFixed(2)} / {settings.currencySymbol}
-                        {item.budget.monthlyLimit.toFixed(2)}
-                      </Text>
-                      <Text className="text-xs font-semibold text-foreground">
-                        {item.progress.toFixed(0)}%
-                      </Text>
-                    </View>
-
-                    {/* Remaining */}
-                    {item.remaining > 0 && (
-                      <Text className="text-xs text-success">
-                        {settings.currencySymbol}
-                        {item.remaining.toFixed(2)} remaining
-                      </Text>
-                    )}
-                    {item.remaining <= 0 && (
-                      <Text className="text-xs text-error">
-                        Over by {settings.currencySymbol}
-                        {Math.abs(item.remaining).toFixed(2)}
-                      </Text>
-                    )}
-                  </View>
+                  {/* Animated Progress Bar */}
+                  <AnimatedProgressBar
+                    progress={item.progress / 100}
+                    label={getCategoryLabel(item.budget.category)}
+                    spent={item.spent}
+                    budget={item.budget.monthlyLimit}
+                    currency={settings.currencySymbol}
+                  />
                 </View>
               </TouchableOpacity>
             )}

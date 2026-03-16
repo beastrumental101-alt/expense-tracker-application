@@ -67,3 +67,14 @@
 - [x] Persist theme preference to AsyncStorage
 - [x] Update theme colors for light and dark modes
 - [x] Test theme switching across all screens
+
+## Animations & Modern UI
+
+- [x] Modernize bottom tab bar with smooth animations
+- [x] Add scale and fade animations to tab icons on press
+- [ ] Implement smooth screen transitions between tabs
+- [x] Add entrance animations to transaction cards
+- [x] Add button press animations with haptic feedback
+- [x] Implement smooth list animations for transaction history
+- [ ] Add modal entrance/exit animations
+- [x] Create animated progress bars for budget tracking

@@ -13,6 +13,7 @@ import { formatCurrency, sortTransactionsByDate } from "@/lib/utils-expense";
 import { useColors } from "@/hooks/use-colors";
 import { getCategoryIcon, getCategoryLabel, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/types";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { AnimatedTransactionCard } from "@/components/animated-transaction-card";
 import { useState, useMemo } from "react";
 
 export default function HistoryScreen() {
@@ -95,51 +96,21 @@ export default function HistoryScreen() {
             data={filteredTransactions}
             keyExtractor={(item) => item.id}
             scrollEnabled={true}
-            renderItem={({ item }) => (
-              <View className="flex-row items-center justify-between bg-surface rounded-xl p-4 mb-2 border border-border">
-                <View className="flex-row items-center gap-3 flex-1">
-                  <View
-                    className="w-10 h-10 rounded-full items-center justify-center"
-                    style={{
-                      backgroundColor:
-                        item.type === "income" ? colors.success + "20" : colors.error + "20",
-                    }}
-                  >
-                    <IconSymbol
-                      name={getCategoryIcon(item.category) as any}
-                      size={20}
-                      color={item.type === "income" ? colors.success : colors.error}
-                    />
-                  </View>
-
-                  <View className="flex-1">
-                    <Text className="text-sm font-semibold text-foreground">
-                      {getCategoryLabel(item.category)}
-                    </Text>
-                    <Text className="text-xs text-muted">
-                      {item.date}
-                      {item.notes ? ` • ${item.notes}` : ""}
-                    </Text>
-                  </View>
+            renderItem={({ item, index }) => (
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1">
+                  <AnimatedTransactionCard
+                    transaction={item}
+                    index={index}
+                    currency={settings.currencySymbol}
+                  />
                 </View>
-
-                <View className="flex-row items-center gap-3">
-                  <Text
-                    className={`text-sm font-semibold ${
-                      item.type === "income" ? "text-success" : "text-error"
-                    }`}
-                  >
-                    {item.type === "income" ? "+" : "-"}
-                    {formatCurrency(item.amount, settings.currencySymbol)}
-                  </Text>
-
-                  <TouchableOpacity
-                    onPress={() => handleDeleteTransaction(item.id)}
-                    className="p-2"
-                  >
-                    <Text className="text-lg text-error">🗑</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  onPress={() => handleDeleteTransaction(item.id)}
+                  className="p-2"
+                >
+                  <Text className="text-lg text-error">🗑</Text>
+                </TouchableOpacity>
               </View>
             )}
             contentContainerStyle={{ paddingBottom: 20 }}
